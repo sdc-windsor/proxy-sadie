@@ -1,0 +1,47 @@
+config:
+  payload:
+    path: "test_ids.csv"
+    fields:
+      - "id"
+      - "userId"
+  target: 'http:/'
+  phases:
+    - duration: 30
+      arrivalRate: 1
+scenarios:
+  - name: "Get 1 video"
+    flow:
+      - get:
+          url: "/localhost:3001/videos/{{ id }}"
+  - name: "Get comments for 1 video"
+    flow:
+      - get:
+          url: "/localhost:3003/comments/{{ id }}"
+  - name: "Get categories for 1 video"
+    flow:
+      - get:
+         url: "/localhost:3003/categories/{{ id }}"
+  - name: "Get details for 1 video"
+    flow:
+      - get:
+          url: "/localhost:3003/details/{{ id }}"
+  - name: "Get usersthubnail for 1 video"
+    flow:
+      - get:
+          url: "/localhost:3003/usersthumbnail/{{ userId }}"
+  - name: "Get recommendations for 1 video"
+    flow:
+      - post:
+          url: '/localhost:3002/graphql'
+          json:
+            query: "
+                    {
+                      getRecommendations(videoId:{{ id }}) {
+                        id,
+                        author,
+                        title,
+                        thumbnail,
+                        plays
+                      }
+                    }
+                  "
